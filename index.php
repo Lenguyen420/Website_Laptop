@@ -1,5 +1,7 @@
 <?php
 include './function/comon_function.php';
+session_start();
+
 ?>
 
 <!DOCTYPE html>
@@ -19,6 +21,11 @@ include './function/comon_function.php';
 
     <link rel="stylesheet" href="./css/style.css">
     <title>LAPTOP79</title>
+    <style>
+        body{
+            overflow-x: hidden;
+        }
+    </style>
 </head>
 
 <body>
@@ -27,31 +34,42 @@ include './function/comon_function.php';
     <div class="container-fluid p-0">
         <nav class="navbar navbar-expand-lg bg-info">
             <div class="container-fluid">
-                <img src="./image/logo.jpg" class="logo">
+                <img src="./image/logo2.jpg" class="logo">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Trang chủ</a>
+                            <a class="nav-link active" aria-current="page" href="index.php">Trang chủ</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Giới thiệu</a>
+                            <a class="nav-link" href="GioiThieu.php">Giới thiệu</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Liên hệ</a>
+                            <a class="nav-link" href="LienHe.php">Liên hệ</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#"><i class="fa-solid fa-cart-shopping"></i><sup>1</sup></a>
+                            <a class="nav-link" href="GioHang.php"><i class="fa-solid fa-cart-shopping"></i><sup><?php Cart_item(); ?></sup></a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Tổng giá: 100</a>
-                        </li>
+
+                        <?php
+                        if (isset($_SESSION['username'])) {
+                            echo "<li class='nav-item'>
+                            <a class='nav-link' href='./user/Profile.php'><i class='fa-solid fa-user'></i></a>
+                        </li>";
+
+
+                        }
+
+                        ?>
+                        
+                        
                     </ul>
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-light" type="submit">Search</button>
+                    <form class="d-flex" action="TimKiem.php" method="get">
+                        <input class="form-control me-2" type="search" placeholder="Bạn đang tìm gì?" aria-label="Search" name="search_data">
+                        <!-- <button class="btn btn-outline-light" type="submit">Search</button> -->
+                        <input type="submit" value="Tìm" class="btn btn-outline-light" name="search_sanpham">
                     </form>
                 </div>
             </div>
@@ -59,14 +77,37 @@ include './function/comon_function.php';
         <!-- 2 -->
         <nav class="navbar navbar-expand-lg  navbar-dart bg-secondary">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Chào bạn!</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link p-2" href="#"><i class="fa-solid fa-right-to-bracket"></i>Đăng nhập</a>
-                </li>
+                <?php
+                if (isset($_SESSION['username'])) {
+                    echo "
+    <li class='nav-item'>
+        <a class='nav-link' href='#'>Chào " . htmlspecialchars($_SESSION['username']) . "!</a>
+    </li>
+    <li class='nav-item'>
+        <a class='nav-link' href='./user/Dangxuat.php'><i class='fa-solid fa-right-to-bracket'></i> Đăng xuất</a>
+    </li>
+    ";
+                } else {
+                    echo "
+    <li class='nav-item'>
+        <a class='nav-link' href='#'>Chào bạn!</a>
+    </li>
+    <li class='nav-item'>
+        <a class='nav-link' href='./user/Dangnhap.php'><i class='fa-solid fa-right-to-bracket'></i> Đăng nhập</a>
+    </li>
+    ";
+                }
+
+                ?>
+
             </ul>
         </nav>
+
+        <!-- gọi giỏ hàng -->
+        <?php
+        Giohang();
+
+        ?>
         <!-- 3  main-->
         <div class="top">
 
@@ -85,7 +126,7 @@ include './function/comon_function.php';
                         </a>
                     </li>
                     <?php
-                    getThuongHieu();                  
+                    getThuongHieu();
                     ?>
 
                 </ul>
@@ -97,7 +138,7 @@ include './function/comon_function.php';
                         </a>
                     </li>
                     <?php
-                   getDanhMuc();
+                    getDanhMuc();
                     ?>
 
                 </ul>
@@ -108,6 +149,10 @@ include './function/comon_function.php';
                     <!-- thêm sản phẩm bằng php -->
                     <?php
                     getSanPham();
+                    getUniqueDanhMuc();
+                    getUniqueThuongHieu();
+                    $ip = getIPAddress();  
+                    //echo 'User Real IP Address - '.$ip; 
                     ?>
                 </div>
                 <!-- end san pham -->
@@ -116,9 +161,7 @@ include './function/comon_function.php';
 
         </div>
         <!-- footer -->
-        <div class="bg-info p-3 text-center">
-            <p>hhhhhhhhhhhhhhhhhhhhhhhhhh</p>
-        </div>
+        <?php include './page/footer.php'  ?>
     </div>
 
 
